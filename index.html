@@ -50,8 +50,9 @@
     box-shadow: inset 2px 2px 0px rgba(255,255,255,0.3), inset -2px -2px 0px rgba(0,0,0,0.3);
     flex-shrink: 0;
   }
-  .start:active {
+  .start:active, .start.active {
     box-shadow: inset 2px 2px 0px rgba(0,0,0,0.3), inset -2px -2px 0px rgba(255,255,255,0.3);
+    background: #1e7038;
   }
   .tray, .task{
     background:var(--win95-light);
@@ -133,6 +134,7 @@
   .card.twitter:hover { background: rgba(29, 161, 242, 0.2); }
   .card.tiktok:hover { background: rgba(0, 0, 0, 0.2); }
   .card.instagram:hover { background: rgba(193, 53, 132, 0.2); }
+  .card.kofi:hover { background: rgba(255, 94, 91, 0.2); }
   .card .icon-img { width: 32px; height: 32px; image-rendering: pixelated; }
   .card.youtube .icon-img { width: 42px; height: 42px; } /* 30% bigger total (20+10) */
   .card .info { flex: 1; display: flex; flex-direction: column; }
@@ -236,6 +238,10 @@
         <img alt="" src="icons/w95 instagram.png">
         <div>Instagram</div>
       </div>
+      <div class="icon" onclick="window.open('https://ko-fi.com/tello', '_blank')">
+        <img alt="" src="https://storage.ko-fi.com/cdn/brandasset/kofi_s_logo_nolabel.png">
+        <div>Ko-Fi</div>
+      </div>
     </div>
 
     <!-- Social Links window -->
@@ -288,6 +294,13 @@
                 <a href="https://www.instagram.com/tellobytetv" target="_blank">@tellobytetv</a>
             </div>
           </div>
+          <div class="card kofi" onclick="window.open('https://ko-fi.com/tello', '_blank')">
+            <img class="icon-img" src="https://storage.ko-fi.com/cdn/brandasset/kofi_s_logo_nolabel.png" alt="Ko-Fi">
+            <div class="info">
+                <span class="label">Ko-Fi</span>
+                <a href="https://ko-fi.com/tello" target="_blank">Support Me</a>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -335,11 +348,22 @@
     </div>
   </div>
 
+    <!-- Ko-Fi Tip Window -->
+    <div class="window" id="kofiWindow" style="left:10px;top:50px;width:360px;height:750px;display:none;">
+      <div class="titlebar">
+        <div style="display:flex;align-items:center;gap:5px"><img src="https://storage.ko-fi.com/cdn/brandasset/kofi_s_logo_nolabel.png" style="width:16px"><span>Tip Me</span></div>
+        <div class="controls"><div class="btn" onclick="this.closest('.window').style.display='none'; document.getElementById('start-btn').classList.remove('active');">x</div></div>
+      </div>
+      <div class="content" style="padding:0; overflow:hidden;">
+         <iframe id='kofiframe' src='https://ko-fi.com/tello/?hidefeed=true&widget=true&embed=true&preview=true' style='border:none;width:100%;height:100%;padding:4px;background:#f9f9f9;' title='tello'></iframe>
+      </div>
+    </div>
+
   <!-- taskbar -->
   <div class="taskbar">
-    <div class="start">
-        <img src="https://win98icons.alexmeub.com/icons/png/windows-0.png" style="width:20px; height:20px; margin-right:4px;">
-        Start
+    <div class="start" id="start-btn" onclick="toggleWindow('kofiWindow', 'start-btn')">
+        <img src="https://storage.ko-fi.com/cdn/brandasset/kofi_s_logo_nolabel.png" style="width:20px; height:20px; margin-right:4px;">
+        Tip Me
     </div>
     <div class="task" id="task-social" onclick="toggleWindow('socialWindow', 'task-social')">
         <img src="https://win98icons.alexmeub.com/icons/png/briefcase-0.png" style="width:16px; height:16px; margin-right:4px;">
@@ -374,6 +398,7 @@
 
   // Window Management & Taskbar
   const WIN_TASK_MAP = {
+    'kofiWindow': 'start-btn',
     'socialWindow': 'task-social',
     'twitchWindow': 'task-twitch',
     'tiktokWindow': 'task-tiktok',
@@ -386,6 +411,9 @@
     
     // Update taskbar
     document.querySelectorAll('.task').forEach(t => t.classList.remove('active'));
+    const startBtn = document.getElementById('start-btn');
+    if(startBtn) startBtn.classList.remove('active');
+    
     const taskId = WIN_TASK_MAP[win.id];
     if(taskId) {
         const task = document.getElementById(taskId);
