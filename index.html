@@ -101,8 +101,10 @@
   .btn{
     width:18px;height:18px;background:#e0f0ff;border:2px solid #0a3a6a; display:grid;place-items:center;
     color:#0a3a6a; font-size:14px; line-height:1; cursor: url('w95-face-cursor.cur'), auto;
+    transition: background 0.2s, border-color 0.2s, color 0.2s;
   }
-  .btn:active { background: #ccc; }
+  .btn:hover { background: #ffcccc; border-color: #a00; }
+  .btn:active { background: #ff0000; color: #fff; border-color: #800; }
   .content{
     padding:10px;background:#dfe9f6;border-top:2px solid #9ab8d6; 
     flex: 1; overflow:auto;
@@ -135,6 +137,7 @@
   .card.tiktok:hover { background: rgba(0, 0, 0, 0.2); }
   .card.instagram:hover { background: rgba(193, 53, 132, 0.2); }
   .card.kofi:hover { background: rgba(255, 94, 91, 0.2); }
+  .card.discord:hover { background: rgba(88, 101, 242, 0.2); }
   .card .icon-img { width: 32px; height: 32px; image-rendering: pixelated; }
   .card.youtube .icon-img { width: 42px; height: 42px; } /* 30% bigger total (20+10) */
   .card .info { flex: 1; display: flex; flex-direction: column; }
@@ -174,21 +177,25 @@
     
     /* Stack windows */
     .window {
-      position: relative !important; /* Override JS absolute positioning */
-      top: auto !important; 
-      left: auto !important;
-      width: 100% !important; 
+      position: fixed !important; /* Override JS absolute positioning */
+      top: 0 !important; 
+      left: 0 !important;
+      right: 0 !important;
+      bottom: 46px !important; /* Leave space for taskbar */
+      width: auto !important; 
       min-width: 0 !important;
       height: auto !important;
       min-height: auto !important;
       margin: 0;
       resize: none !important; /* Disable resize on mobile */
+      z-index: 2000;
     }
     
     /* Ensure content inside windows is visible */
     .content {
-      max-height: 400px; /* Limit inner content height if needed, or let it grow */
+      max-height: none; 
       overflow-y: auto;
+      flex: 1;
     }
     
     /* Adjust grid to single column */
@@ -202,45 +209,60 @@
 <body>
   <div class="desktop" id="desktop">
     <div class="icons">
-      <div class="icon" ondblclick="alert('Welcome to tellobyte\'s PC!')">
+      <!-- 1. My Computer -->
+      <div class="icon" ondblclick="window.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ&pp=ygUJcmljayByb2xs', '_blank')">
         <img alt="" src="https://win98icons.alexmeub.com/icons/png/computer_explorer-4.png">
         <div>My Computer</div>
       </div>
-      <div class="icon" onclick="window.open('https://streamlabs.com/tellobyte', '_blank')">
-        <img alt="" src="icons/w95 web streamlabs.png">
-        <div>Streamlabs</div>
-      </div>
-      <div class="icon">
-        <img alt="" src="https://win98icons.alexmeub.com/icons/png/recycle_bin_empty-4.png">
-        <div>Recycle Bin</div>
-      </div>
+      <!-- 2. Socials -->
       <div class="icon" onclick="toggleWindow('socialWindow', 'task-social')">
         <img alt="" src="https://win98icons.alexmeub.com/icons/png/briefcase-4.png">
         <div>Socials</div>
       </div>
+      <!-- 3. Streamlabs -->
+      <div class="icon" onclick="window.open('https://streamlabs.com/tellobyte', '_blank')">
+        <img alt="" src="icons/w95 web streamlabs.png">
+        <div>Streamlabs</div>
+      </div>
+      <!-- 4. Ko-Fi -->
+      <div class="icon" onclick="window.open('https://ko-fi.com/tello', '_blank')">
+        <img alt="" src="https://storage.ko-fi.com/cdn/brandasset/kofi_s_logo_nolabel.png">
+        <div>Ko-Fi</div>
+      </div>
+      <!-- 5. Twitch -->
+      <div class="icon" onclick="window.open('https://twitch.tv/tellobyte', '_blank')">
+        <img alt="" src="icons/w95 twitch.png">
+        <div>Twitch</div>
+      </div>
+      <!-- 6. YouTube -->
       <div class="icon" onclick="window.open('https://youtube.com/@tellobyte', '_blank')">
         <img alt="" src="icons/Web - Youtube.png" style="width:58px;height:58px">
         <div>YouTube</div>
       </div>
-      <div class="icon" onclick="window.open('https://www.tiktok.com/@tellobytetv', '_blank')">
-        <img alt="" src="icons8-tiktok.svg">
-        <div>TikTok</div>
-      </div>
+      <!-- 7. Kick -->
       <div class="icon" onclick="window.open('https://kick.com/tellobyte', '_blank')">
         <img alt="" src="kickstream.png">
         <div>Kick</div>
       </div>
+      <!-- 8. Discord -->
+      <div class="icon" onclick="window.open('https://discord.gg/tellobyte', '_blank')">
+        <img alt="" src="icons/App - Discord.png">
+        <div>Discord</div>
+      </div>
+      <!-- 9. Twitter -->
       <div class="icon" onclick="window.open('https://twitter.com/tellobyte', '_blank')">
         <img alt="" src="icons/Web - TwitterPixel.png">
         <div>Twitter</div>
       </div>
+      <!-- 10. TikTok -->
+      <div class="icon" onclick="window.open('https://www.tiktok.com/@tellobytetv', '_blank')">
+        <img alt="" src="icons8-tiktok.svg">
+        <div>TikTok</div>
+      </div>
+      <!-- 11. Instagram -->
       <div class="icon" onclick="window.open('https://www.instagram.com/tellobytetv', '_blank')">
         <img alt="" src="icons/w95 instagram.png">
         <div>Instagram</div>
-      </div>
-      <div class="icon" onclick="window.open('https://ko-fi.com/tello', '_blank')">
-        <img alt="" src="https://storage.ko-fi.com/cdn/brandasset/kofi_s_logo_nolabel.png">
-        <div>Ko-Fi</div>
       </div>
     </div>
 
@@ -266,11 +288,18 @@
                 <a href="https://youtube.com/@tellobyte" target="_blank">@tellobyte</a>
             </div>
           </div>
-          <div class="card kick" onclick="window.open('https://kick.com/tellobyte', '_blank')">
-            <img class="icon-img" src="kickstream.png" alt="Kick">
+          <div class="card discord" onclick="window.open('https://discord.gg/tellobyte', '_blank')">
+            <img class="icon-img" src="icons/App - Discord.png" alt="Discord">
             <div class="info">
-                <span class="label">Kick</span>
-                <a href="https://kick.com/tellobyte" target="_blank">@tellobyte</a>
+                <span class="label">Discord</span>
+                <a href="https://discord.gg/tellobyte" target="_blank">Join Server</a>
+            </div>
+          </div>
+          <div class="card kofi" onclick="window.open('https://ko-fi.com/tello', '_blank')">
+            <img class="icon-img" src="https://storage.ko-fi.com/cdn/brandasset/kofi_s_logo_nolabel.png" alt="Ko-Fi">
+            <div class="info">
+                <span class="label">Ko-Fi</span>
+                <a href="https://ko-fi.com/tello" target="_blank">Support Me</a>
             </div>
           </div>
           <div class="card twitter" onclick="window.open('https://twitter.com/tellobyte', '_blank')">
@@ -278,6 +307,13 @@
             <div class="info">
                 <span class="label">Twitter / X</span>
                 <a href="https://twitter.com/tellobyte" target="_blank">@tellobyte</a>
+            </div>
+          </div>
+          <div class="card kick" onclick="window.open('https://kick.com/tellobyte', '_blank')">
+            <img class="icon-img" src="kickstream.png" alt="Kick">
+            <div class="info">
+                <span class="label">Kick</span>
+                <a href="https://kick.com/tellobyte" target="_blank">@tellobyte</a>
             </div>
           </div>
           <div class="card tiktok" onclick="window.open('https://www.tiktok.com/@tellobytetv', '_blank')">
@@ -292,13 +328,6 @@
             <div class="info">
                 <span class="label">Instagram</span>
                 <a href="https://www.instagram.com/tellobytetv" target="_blank">@tellobytetv</a>
-            </div>
-          </div>
-          <div class="card kofi" onclick="window.open('https://ko-fi.com/tello', '_blank')">
-            <img class="icon-img" src="https://storage.ko-fi.com/cdn/brandasset/kofi_s_logo_nolabel.png" alt="Ko-Fi">
-            <div class="info">
-                <span class="label">Ko-Fi</span>
-                <a href="https://ko-fi.com/tello" target="_blank">Support Me</a>
             </div>
           </div>
         </div>
