@@ -44,7 +44,7 @@ const TIKTOK_URLS = [
    - Go to **Settings** > **Pages**.
    - Under **Source**, select `main` (or `master`) branch.
    - Click **Save**.
-4. **Done!** Your site will be live at `https://yourusername.github.io/social-hub/`.
+4. **Done!**`.
 
 ## Notes
 - **Twitch Embed**: The Twitch player requires the `parent` parameter to match your website's domain. The script automatically handles this for `localhost` and `github.io` domains. If you use a custom domain (e.g., `tellobyte.com`), it will also work automatically.
