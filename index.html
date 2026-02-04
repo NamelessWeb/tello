@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>tellobyte | Windows 95 Social Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="cursedcursor.png">
+    <style>
+  :root{
+    /* Theme Colors based on screenshot */
+    --win95-blue: #2f6fb2;
+    --win95-blue-dark: #1f4f82;
+    --win95-gray: #c0c0c0;
+    --win95-light: #e5e5e5;
+    --win95-shadow: #00000080;
+    --accent: #49c5ff;
+    --text: #111;
+    --bg-dark-purple: #24124a;
+    --bg-light-purple: #4c2b89;
+  }
+  
+  html,body{height:100%;}
+  body{
+    margin:0;
+    background: url('Wallpaper_Night.jpg') no-repeat center center fixed;
+    background-size: cover;
+    
+    color:var(--text);
+    font-family: "VT323", Tahoma, Verdana, sans-serif;
+    font-size:20px;
+    overflow:hidden;
+    cursor: url('w95-face-cursor.cur'), auto;
+  }
+
+  /* taskbar */
+  .taskbar{
+    position:fixed;left:0;right:0;bottom:0;height:42px;
+    background:var(--win95-blue);
+    border-top:4px solid var(--win95-blue-dark);
+    display:flex;align-items:center;gap:8px;padding:4px 8px;box-shadow:0 -2px 0 #133552 inset;
+    z-index: 1000;
+  }
+  .start{
+    background:#2a934d;color:#fff;border:2px solid #10612d;padding:6px 12px;
+    display:flex;align-items:center;gap:8px;cursor:pointer;
+    font-weight: bold;
+    box-shadow: inset 2px 2px 0px rgba(255,255,255,0.3), inset -2px -2px 0px rgba(0,0,0,0.3);
+    flex-shrink: 0;
+  }
+  .start:active {
+    box-shadow: inset 2px 2px 0px rgba(0,0,0,0.3), inset -2px -2px 0px rgba(255,255,255,0.3);
+  }
+  .tray, .task{
+    background:var(--win95-light);
+    border:2px solid #9a9a9a; 
+    box-shadow:1px 1px 0 #fff inset, -1px -1px 0 #666 inset;
+    padding:4px 10px;color:#0b2b4f;
+    cursor: url('w95-face-cursor.cur'), auto;
+    display: flex; align-items: center;
+  }
+  .task {
+    flex: 1;
+    max-width: 160px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .task.active {
+    background: #e0e0e0;
+    box-shadow: inset 1px 1px 0 #666, inset -1px -1px 0 #fff;
+  }
+  .tray{margin-left:auto;display:flex;gap:8px;align-items:center; cursor: default; flex-shrink: 0;}
+  
+  /* desktop icons */
+  .desktop{position:absolute;inset:0; padding:14px; overflow:auto; padding-bottom: 50px;}
+  .icons{position:absolute;left:12px;top:12px;display:grid;gap:16px;}
+  .icon{width:120px;color:#e8f2ff;text-shadow:0 2px 0 #000;cursor: url('w95-face-cursor.cur'), auto; text-align: center;}
+  .icon:hover { background: rgba(0, 0, 128, 0.3); outline: 1px dotted #e8f2ff; }
+  .icon img{width:48px;height:48px;display:block;margin:0 auto 6px;image-rendering:pixelated;filter:drop-shadow(2px 2px 0 #000);}
+  
+  /* window */
+  .window{
+    position:absolute; min-width:320px; min-height:220px;
+    background:var(--win95-light);
+    border:3px solid #0a3a6a; 
+    box-shadow:4px 4px 0 var(--win95-shadow);
+    display: flex; flex-direction: column;
+    resize: both; overflow: auto;
+  }
+  .titlebar{
+    background:linear-gradient(90deg, var(--win95-blue-dark), var(--win95-blue));
+    color:#fff; padding:6px 8px; display:flex; justify-content:space-between; align-items:center;
+    cursor:move; user-select:none; font-weight:bold; letter-spacing:0.5px;
+    height: 32px; box-sizing: border-box;
+  }
+  .controls{display:flex;gap:6px;}
+  .btn{
+    width:18px;height:18px;background:#e0f0ff;border:2px solid #0a3a6a; display:grid;place-items:center;
+    color:#0a3a6a; font-size:14px; line-height:1; cursor: url('w95-face-cursor.cur'), auto;
+  }
+  .btn:active { background: #ccc; }
+  .content{
+    padding:10px;background:#dfe9f6;border-top:2px solid #9ab8d6; 
+    flex: 1; overflow:auto;
+    position: relative;
+  }
+  
+  /* Custom Scrollbar for Webkit */
+  ::-webkit-scrollbar { width: 16px; height: 16px; }
+  ::-webkit-scrollbar-track { background: #dfdfdf; }
+  ::-webkit-scrollbar-thumb { background: #c0c0c0; border: 2px solid #dfdfdf; box-shadow: inset 1px 1px #fff, inset -1px -1px #444; }
+  ::-webkit-scrollbar-button { background: #c0c0c0; height: 16px; width: 16px; box-shadow: inset 1px 1px #fff, inset -1px -1px #444; display: block; }
+
+  a{color:#0a3a6a;text-decoration:none; cursor: url('w95-face-cursor.cur'), auto;} a:hover{text-decoration:underline;}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;}
+  .card{
+    background:#fff;border:2px solid #9a9a9a; 
+    box-shadow:1px 1px 0 #fff inset, -1px -1px 0 #666 inset; 
+    padding:6px;
+    display: flex; flex-direction: row; align-items: center; gap: 10px;
+    cursor: url('w95-face-cursor.cur'), pointer;
+    transition: background 0.2s;
+  }
+  .card:hover { filter: brightness(0.95); }
+  
+  /* Platform hover colors (20% transparent) */
+  .card.twitch:hover { background: rgba(145, 70, 255, 0.2); }
+  .card.youtube:hover { background: rgba(255, 0, 0, 0.2); }
+  .card.kick:hover { background: rgba(83, 252, 24, 0.2); }
+  .card.twitter:hover { background: rgba(29, 161, 242, 0.2); }
+  .card.tiktok:hover { background: rgba(0, 0, 0, 0.2); }
+  .card.instagram:hover { background: rgba(193, 53, 132, 0.2); }
+  .card .icon-img { width: 32px; height: 32px; image-rendering: pixelated; }
+  .card.youtube .icon-img { width: 42px; height: 42px; } /* 30% bigger total (20+10) */
+  .card .info { flex: 1; display: flex; flex-direction: column; }
+  .video{aspect-ratio:16/9; background:#000; width: 100%; border: none;}
+  .label{font-size:18px;color:#083059; font-weight: bold; line-height: 1;}
+  /* .bar removed in favor of icons */
+  .status{display:flex;gap:8px;align-items:center;margin-top:8px;color:#083059;}
+  .pill{background:#bcd4f1;border:2px solid #94b7de;padding:2px 8px; font-size: 0.8em;}
+  
+  /* Loading state */
+  .loading { text-align: center; padding: 20px; color: #666; }
+
+  @media (max-width:600px){
+    body{font-size:18px}
+    
+    /* Make desktop a scrolling flex container */
+    .desktop { 
+      display: flex; 
+      flex-direction: column; 
+      gap: 20px; 
+      padding: 10px;
+      padding-bottom: 60px; /* Space for taskbar */
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+    
+    /* Flow icons at the top */
+    .icons {
+      position: static; /* Reset absolute */
+      display: flex; 
+      flex-wrap: wrap; 
+      justify-content: center; 
+      gap: 15px;
+      width: 100%;
+      margin-bottom: 10px;
+    }
+    
+    /* Stack windows */
+    .window {
+      position: relative !important; /* Override JS absolute positioning */
+      top: auto !important; 
+      left: auto !important;
+      width: 100% !important; 
+      min-width: 0 !important;
+      height: auto !important;
+      min-height: auto !important;
+      margin: 0;
+      resize: none !important; /* Disable resize on mobile */
+    }
+    
+    /* Ensure content inside windows is visible */
+    .content {
+      max-height: 400px; /* Limit inner content height if needed, or let it grow */
+      overflow-y: auto;
+    }
+    
+    /* Adjust grid to single column */
+    .grid { grid-template-columns: 1fr; }
+    
+    /* Hide window controls that don't make sense on mobile (like close, since they are stacked) */
+    /* Optional: keep close button if user wants to hide sections */
+  }
+</style>
+</head>
+<body>
+  <div class="desktop" id="desktop">
+    <div class="icons">
+      <div class="icon" ondblclick="alert('Welcome to tellobyte\'s PC!')">
+        <img alt="" src="https://win98icons.alexmeub.com/icons/png/computer_explorer-4.png">
+        <div>My Computer</div>
+      </div>
+      <div class="icon" onclick="window.open('https://streamlabs.com/tellobyte', '_blank')">
+        <img alt="" src="icons/w95 web streamlabs.png">
+        <div>Streamlabs</div>
+      </div>
+      <div class="icon">
+        <img alt="" src="https://win98icons.alexmeub.com/icons/png/recycle_bin_empty-4.png">
+        <div>Recycle Bin</div>
+      </div>
+      <div class="icon" onclick="toggleWindow('socialWindow', 'task-social')">
+        <img alt="" src="https://win98icons.alexmeub.com/icons/png/briefcase-4.png">
+        <div>Socials</div>
+      </div>
+      <div class="icon" onclick="window.open('https://youtube.com/@tellobyte', '_blank')">
+        <img alt="" src="icons/Web - Youtube.png" style="width:58px;height:58px">
+        <div>YouTube</div>
+      </div>
+      <div class="icon" onclick="window.open('https://www.tiktok.com/@tellobytetv', '_blank')">
+        <img alt="" src="icons8-tiktok.svg">
+        <div>TikTok</div>
+      </div>
+      <div class="icon" onclick="window.open('https://kick.com/tellobyte', '_blank')">
+        <img alt="" src="kickstream.png">
+        <div>Kick</div>
+      </div>
+      <div class="icon" onclick="window.open('https://twitter.com/tellobyte', '_blank')">
+        <img alt="" src="icons/Web - TwitterPixel.png">
+        <div>Twitter</div>
+      </div>
+      <div class="icon" onclick="window.open('https://www.instagram.com/tellobytetv', '_blank')">
+        <img alt="" src="icons/w95 instagram.png">
+        <div>Instagram</div>
+      </div>
+    </div>
+
+    <!-- Social Links window -->
+    <div class="window" id="socialWindow" style="left:150px;top:10px;width:320px;height:430px">
+      <div class="titlebar">
+        <div style="display:flex;align-items:center;gap:5px"><img src="https://win98icons.alexmeub.com/icons/png/briefcase-0.png" style="width:16px"><span>Social Links</span></div>
+        <div class="controls"><div class="btn" onclick="this.closest('.window').style.display='none'">x</div></div>
+      </div>
+      <div class="content">
+        <div class="grid">
+          <div class="card twitch" onclick="window.open('https://twitch.tv/tellobyte', '_blank')">
+            <img class="icon-img" src="icons/w95 twitch.png" alt="Twitch">
+            <div class="info">
+                <span class="label">Twitch</span>
+                <a href="https://twitch.tv/tellobyte" target="_blank">@tellobyte</a>
+            </div>
+          </div>
+          <div class="card youtube" onclick="window.open('https://youtube.com/@tellobyte', '_blank')">
+            <img class="icon-img" src="icons/Web - Youtube.png" alt="YouTube">
+            <div class="info">
+                <span class="label">YouTube</span>
+                <a href="https://youtube.com/@tellobyte" target="_blank">@tellobyte</a>
+            </div>
+          </div>
+          <div class="card kick" onclick="window.open('https://kick.com/tellobyte', '_blank')">
+            <img class="icon-img" src="kickstream.png" alt="Kick">
+            <div class="info">
+                <span class="label">Kick</span>
+                <a href="https://kick.com/tellobyte" target="_blank">@tellobyte</a>
+            </div>
+          </div>
+          <div class="card twitter" onclick="window.open('https://twitter.com/tellobyte', '_blank')">
+            <img class="icon-img" src="icons/Web - TwitterPixel.png" alt="Twitter">
+            <div class="info">
+                <span class="label">Twitter / X</span>
+                <a href="https://twitter.com/tellobyte" target="_blank">@tellobyte</a>
+            </div>
+          </div>
+          <div class="card tiktok" onclick="window.open('https://www.tiktok.com/@tellobytetv', '_blank')">
+            <img class="icon-img" src="icons8-tiktok.svg" alt="TikTok">
+            <div class="info">
+                <span class="label">TikTok</span>
+                <a href="https://www.tiktok.com/@tellobytetv" target="_blank">@tellobytetv</a>
+            </div>
+          </div>
+          <div class="card instagram" onclick="window.open('https://www.instagram.com/tellobytetv', '_blank')">
+            <img class="icon-img" src="icons/w95 instagram.png" alt="Instagram">
+            <div class="info">
+                <span class="label">Instagram</span>
+                <a href="https://www.instagram.com/tellobytetv" target="_blank">@tellobytetv</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Twitch Live window -->
+    <div class="window" id="twitchWindow" style="left:480px;top:10px;width:815px;height:525px; resize: both; overflow: auto; min-width: 300px; min-height: 200px;">
+      <div class="titlebar">
+        <div style="display:flex;align-items:center;gap:5px"><img src="icons/w95 twitch.png" style="width:24px"><span>Twitch Live</span></div>
+        <div class="controls"><div class="btn" onclick="this.closest('.window').style.display='none'">x</div></div>
+      </div>
+      <div class="content" style="padding:0; overflow:hidden; background:#000; display: flex; flex-direction: column;">
+        <div class="video" style="flex: 1; height: 100%;"><iframe id="twitchPlayer" title="Twitch" allowfullscreen frameborder="0" width="100%" height="100%"></iframe></div>
+      </div>
+      <div style="padding: 2px 5px; background: var(--win95-light); border-top: 1px solid #fff;">
+        <small>If offline, check back later!</small>
+      </div>
+    </div>
+
+    <!-- TikTok Shorts window -->
+    <div class="window" id="tiktokWindow" style="left:120px;top:465px;width:288px;height:396px">
+      <div class="titlebar">
+        <div style="display:flex;align-items:center;gap:5px"><img src="icons8-tiktok.svg" style="width:16px"><span>TikTok Profile</span></div>
+        <div class="controls"><div class="btn" onclick="this.closest('.window').style.display='none'">x</div></div>
+      </div>
+      <div class="content" id="tiktokContainer">
+        <div class="grid" id="tiktokGrid">
+          <div class="loading">Loading TikToks...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- YouTube latest window -->
+    <div class="window" id="youtubeWindow" style="left:800px;top:460px;width:585px;height:405px">
+      <div class="titlebar">
+        <div style="display:flex;align-items:center;gap:5px"><img src="icons/Web - Youtube.png" style="width:24px"><span>YouTube Latest</span></div>
+        <div class="controls"><div class="btn" onclick="this.closest('.window').style.display='none'">x</div></div>
+      </div>
+      <div class="content" style="padding:0; overflow:hidden;">
+         <iframe 
+           src="https://www.youtube.com/embed/videoseries?list=UUak1o7ZmtjJ6kTbC68vInpg" 
+           style="width:100%;height:100%;border:0;" 
+           allowfullscreen> 
+         </iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- taskbar -->
+  <div class="taskbar">
+    <div class="start">
+        <img src="https://win98icons.alexmeub.com/icons/png/windows-0.png" style="width:20px; height:20px; margin-right:4px;">
+        Start
+    </div>
+    <div class="task" id="task-social" onclick="toggleWindow('socialWindow', 'task-social')">
+        <img src="https://win98icons.alexmeub.com/icons/png/briefcase-0.png" style="width:16px; height:16px; margin-right:4px;">
+        Social Links
+    </div>
+    <div class="task" id="task-twitch" onclick="toggleWindow('twitchWindow', 'task-twitch')">
+        <img src="icons/w95 twitch.png" style="width:16px; height:16px; margin-right:4px;">
+        Twitch Live
+    </div>
+    <div class="task" id="task-tiktok" onclick="toggleWindow('tiktokWindow', 'task-tiktok')">
+        <img src="icons8-tiktok.svg" style="width:16px; height:16px; margin-right:4px;">
+        TikTok Profile
+    </div>
+    <div class="task" id="task-youtube" onclick="toggleWindow('youtubeWindow', 'task-youtube')">
+        <img src="icons/Web - Youtube.png" style="width:16px; height:16px; margin-right:4px;">
+        YouTube Latest
+    </div>
+    <div class="tray">
+      <span>🔊</span>
+      <span>🕒 <span id="clock"></span></span>
+    </div>
+  </div>
+
+<script>
+  // Config
+  const CONFIG = {
+    twitchChannel: "tellobyte",
+    // NOTE: Replace with your actual Channel ID if automatic lookup fails.
+    // You can find it at https://commentpicker.com/youtube-channel-id.php
+    youtubeChannelId: "UCk8GzjMOrMXtrRiWlBCe72w" // Placeholder/Guess - User needs to verify or use a tool to find it
+  };
+
+  // Window Management & Taskbar
+  const WIN_TASK_MAP = {
+    'socialWindow': 'task-social',
+    'twitchWindow': 'task-twitch',
+    'tiktokWindow': 'task-tiktok',
+    'youtubeWindow': 'task-youtube'
+  };
+
+  function activateWindow(win) {
+    win.style.zIndex = ++highestZ;
+    win.style.display = 'flex'; // Ensure visible
+    
+    // Update taskbar
+    document.querySelectorAll('.task').forEach(t => t.classList.remove('active'));
+    const taskId = WIN_TASK_MAP[win.id];
+    if(taskId) {
+        const task = document.getElementById(taskId);
+        if(task) task.classList.add('active');
+    }
+  }
+
+  function toggleWindow(winId, taskId) {
+    const win = document.getElementById(winId);
+    const task = document.getElementById(taskId);
+    
+    const isVisible = win.style.display !== 'none';
+    const isActive = task.classList.contains('active');
+    
+    if (isVisible && isActive) {
+      win.style.display = 'none';
+      task.classList.remove('active');
+    } else {
+      activateWindow(win);
+    }
+  }
+
+  // Drag windows logic
+  let highestZ = 100;
+  document.querySelectorAll(".window").forEach(win=>{
+    win.addEventListener("mousedown", () => {
+        activateWindow(win);
+    });
+    
+    const bar = win.querySelector(".titlebar");
+    let dx=0, dy=0, drag=false;
+    
+    bar.addEventListener("mousedown",e=>{ 
+        drag=true; 
+        dx = e.clientX - win.offsetLeft; 
+        dy = e.clientY - win.offsetTop; 
+        win.style.zIndex = ++highestZ;
+    });
+    
+    window.addEventListener("mouseup",()=>drag=false);
+    window.addEventListener("mousemove",e=>{
+      if(!drag) return;
+      win.style.left = Math.max(0, e.clientX - dx) + "px";
+      win.style.top  = Math.max(0, e.clientY - dy) + "px";
+    });
+  });
+
+  // Clock
+  const clockEl = document.getElementById("clock");
+  function tick(){
+    const d=new Date();
+    clockEl.textContent = d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+  }
+  tick(); setInterval(tick, 1000);
+
+  // Twitch embed: set parent to current host for GitHub Pages
+  (function(){
+    const parent = location.hostname || "localhost";
+    // For local testing, we need to handle localhost, but Twitch embeds often block localhost.
+    // On GitHub Pages, 'parent' will be 'username.github.io' which works.
+    let src = `https://player.twitch.tv/?channel=${encodeURIComponent(CONFIG.twitchChannel)}&parent=${parent}&muted=false`;
+    
+    // Fallback for empty parent (local file)
+    if (!location.hostname) {
+        src = `https://player.twitch.tv/?channel=${encodeURIComponent(CONFIG.twitchChannel)}&parent=localhost&muted=false`;
+    }
+    
+    document.getElementById("twitchPlayer").src = src;
+  })();
+
+  // TikTok: Embeds creator profile
+  async function loadTikTok(){
+    const grid = document.getElementById("tiktokGrid");
+    grid.innerHTML = ""; // Clear loading
+    
+    // User provided HTML for Creator Embed
+    const embedHTML = `
+      <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@tellobytetv" data-unique-id="tellobytetv" data-embed-type="creator" style="max-width: 780px; min-width: 288px;" >
+        <section>
+          <a target="_blank" href="https://www.tiktok.com/@tellobytetv?refer=creator_embed">@tellobytetv</a>
+        </section>
+      </blockquote>
+    `;
+    
+    const container = document.createElement("div");
+    container.style.width = "100%";
+    container.innerHTML = embedHTML;
+    grid.appendChild(container);
+    
+    // Inject TikTok embed script (async)
+    const script = document.createElement('script');
+    script.src = "https://www.tiktok.com/embed.js";
+    script.async = true;
+    document.body.appendChild(script);
+  }
+  loadTikTok();
+
+  // YouTube latest via RSS feed - DISABLED (Using embed)
+  /*
+  async function loadYouTube(){
+    const grid = document.getElementById("ytGrid");
+    // Try to search or use ID
+    let id = CONFIG.youtubeChannelId;
+    
+    // If we don't have a valid ID, we can't really fetch RSS without a proxy or API key.
+    // However, we can try to use a proxy for the RSS feed to avoid CORS issues if this is client-side only.
+    // RSS to JSON proxy is often needed for client-side fetches due to CORS.
+    const rssUrl = `https://api.rss2json.com/v1/api.json?rss_url=https://www.youtube.com/feeds/videos.xml?channel_id=${id}`;
+    
+    try{
+      const r = await fetch(rssUrl);
+      const data = await r.json();
+      
+      grid.innerHTML = ""; // Clear loading
+      
+      if(data.status !== 'ok' || !data.items || data.items.length === 0){ 
+         grid.innerHTML = `<div class="card">No videos found or invalid Channel ID. <br>Check CONFIG in index.html</div>`; 
+         return; 
+      }
+      
+      data.items.slice(0,3).forEach(item => {
+        // Extract video ID from link or guid
+        // guid: yt:video:VIDEO_ID
+        const vidId = item.guid.split(":").pop();
+        
+        const card = document.createElement("div");
+        card.className = "card";
+        
+        const iframe = document.createElement("iframe");
+        iframe.className = "video";
+        iframe.allowFullscreen = true;
+        iframe.src = `https://www.youtube.com/embed/${vidId}`;
+        
+        const caption = document.createElement("div");
+        caption.style.padding = "6px";
+        caption.innerHTML = `<a href="${item.link}" target="_blank">${item.title}</a>`;
+        
+        card.appendChild(iframe);
+        card.appendChild(caption);
+        grid.appendChild(card);
+      });
+    }catch(err){
+      console.error(err);
+      grid.innerHTML = `<div class="card">Failed to load YouTube feed. (CORS/Network error)</div>`;
+    }
+  }
+  loadYouTube();
+  */
+</script>
+</body>
+</html>
