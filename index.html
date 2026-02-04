@@ -534,6 +534,28 @@
   }
   loadYouTube();
   */
+
+  // Initial Layout Check for Mobile/Vertical
+  function initLayout() {
+    // Check if vertical resolution (portrait) or small screen
+    if (window.innerHeight > window.innerWidth || window.innerWidth < 768) {
+      // Close all except Social Links
+      ['twitchWindow', 'tiktokWindow', 'youtubeWindow'].forEach(id => {
+        const win = document.getElementById(id);
+        if(win) win.style.display = 'none';
+      });
+      
+      // Ensure Social Links is active and centered if possible or just visible
+      const socialWin = document.getElementById('socialWindow');
+      if(socialWin) {
+          activateWindow(socialWin);
+          // Optional: Center it on mobile? The CSS media queries might handle positioning.
+          // But for now just ensuring it's the only one open is the requirement.
+      }
+    }
+  }
+  // Run after a slight delay to ensure everything is rendered, or immediately
+  initLayout();
 </script>
 </body>
 </html>
